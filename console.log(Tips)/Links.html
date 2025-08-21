@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>console.log(Tips) — Links</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#070707;
+      --card:#0f1724;
+      --muted:#9fb2ff;
+      --accent1:#7f00ff;
+      --accent2:#00d4ff;
+      --white:#eaf1ff;
+      --radius:12px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:"League Spartan",Inter,sans-serif;
+      background:radial-gradient(800px 400px at 10% 10%, rgba(127,0,255,0.06), transparent),
+                 radial-gradient(600px 300px at 90% 90%, rgba(0,212,255,0.03), transparent),
+                 var(--bg);
+      color:var(--white);
+      padding:100px 18px 48px;
+      line-height:1.45;
+    }
+    header{
+      position:fixed; inset:0 0 auto 0; height:76px; z-index:1000;
+      display:flex; align-items:center; justify-content:space-between;
+      background:linear-gradient(90deg,var(--accent1), #2575fc 60%);
+      padding:12px 20px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
+      border-bottom-left-radius:14px;
+      border-bottom-right-radius:14px;
+    }
+    .brand{font-weight:700;font-size:20px;letter-spacing:0.6px}
+    nav{display:flex;gap:10px;align-items:center}
+    nav a{
+      color:var(--white);
+      text-decoration:none;
+      font-weight:700;
+      padding:8px 12px;
+      border-radius:10px;
+      font-size:14px;
+      transition: all .16s ease;
+    }
+    nav a:hover{filter:brightness(1.06);transform:translateY(-2px)}
+    nav a.active{background: rgba(255,255,255,0.92); color:#020617; box-shadow:0 8px 30px rgba(0,0,0,0.25);}
+    .wrap{max-width:1100px;margin:0 auto;padding:0 14px}
+    h1{font-size:28px;margin-bottom:12px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:12px}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.03);
+      padding:14px;border-radius:var(--radius);
+      box-shadow:0 8px 28px rgba(0,0,0,0.6);
+      transition: transform .16s ease;
+    }
+    .card:hover{transform:translateY(-4px)}
+    .card h3{margin-bottom:6px;font-size:18px}
+    .card a{
+      display:inline-block;
+      margin-top:6px;
+      background:linear-gradient(90deg,var(--accent2),var(--accent1));
+      color:#03030a;
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:700;
+      font-size:13px;
+      text-decoration:none;
+      transition: transform .16s ease;
+    }
+    .card a:hover{transform:translateY(-2px)}
+    footer{margin-top:26px;text-align:center;color:var(--muted);font-size:13px}
+    @media (max-width:720px){body{padding-top:110px} h1{font-size:22px}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="brand">console.log(Tips)</div>
+  <nav>
+    <a href="../index.html">Início</a>
+    <a href="Links.html" class="active">Links</a>
+    <a href="Tips.html">Tips</a>
+    <a href="AboutMe.html">Sobre mim</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <h1>Links úteis para programadores</h1>
+  <div class="grid">
+    <article class="card">
+      <h3>Documentação Oficial</h3>
+      <a href="https://developer.mozilla.org/pt-BR/" target="_blank" rel="noopener">MDN Web Docs</a>
+      <a href="https://www.python.org" target="_blank" rel="noopener">Python.org</a>
+      <a href="https://www.java.com/pt-BR/" target="_blank" rel="noopener">Java</a>
+      <a href="https://www.php.net" target="_blank" rel="noopener">PHP</a>
+      <a href="https://www.typescriptlang.org" target="_blank" rel="noopener">TypeScript</a>
+      <a href="https://golang.org" target="_blank" rel="noopener">Golang</a>
+      <a href="https://isocpp.org" target="_blank" rel="noopener">C++</a>
+      <a href="https://learn.microsoft.com/pt-br/dotnet/csharp/" target="_blank" rel="noopener">C# (.NET)</a>
+    </article>
+
+    <article class="card">
+      <h3>Ferramentas / IDEs</h3>
+      <a href="https://code.visualstudio.com" target="_blank" rel="noopener">VS Code</a>
+      <a href="https://www.jetbrains.com/idea/" target="_blank" rel="noopener">IntelliJ IDEA</a>
+      <a href="https://www.sublimetext.com" target="_blank" rel="noopener">Sublime Text</a>
+      <a href="https://www.jetbrains.com/pycharm/" target="_blank" rel="noopener">PyCharm</a>
+      <a href="https://www.eclipse.org/" target="_blank" rel="noopener">Eclipse</a>
+      <a href="https://www.postman.com/" target="_blank" rel="noopener">Postman</a>
+      <a href="https://www.docker.com/" target="_blank" rel="noopener">Docker</a>
+    </article>
+
+    <article class="card">
+      <h3>Plataformas de aprendizado</h3>
+      <a href="https://www.codecademy.com" target="_blank" rel="noopener">Codecademy</a>
+      <a href="https://www.freecodecamp.org" target="_blank" rel="noopener">FreeCodeCamp</a>
+      <a href="https://www.udemy.com" target="_blank" rel="noopener">Udemy</a>
+      <a href="https://www.coursera.org" target="_blank" rel="noopener">Coursera</a>
+      <a href="https://www.edx.org" target="_blank" rel="noopener">EDX</a>
+      <a href="https://www.kaggle.com/learn" target="_blank" rel="noopener">Kaggle Learn</a>
+    </article>
+
+    <article class="card">
+      <h3>Comunidade / Ajuda</h3>
+      <a href="https://stackoverflow.com" target="_blank" rel="noopener">Stack Overflow</a>
+      <a href="https://www.reddit.com/r/programming/" target="_blank" rel="noopener">Reddit Programming</a>
+      <a href="https://dev.to" target="_blank" rel="noopener">DEV Community</a>
+      <a href="https://discord.com" target="_blank" rel="noopener">Discord</a>
+    </article>
+
+    <article class="card">
+      <h3>Repositórios / Controle de versão</h3>
+      <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://gitlab.com" target="_blank" rel="noopener">GitLab</a>
+      <a href="https://bitbucket.org" target="_blank" rel="noopener">Bitbucket</a>
+      <a href="https://www.npmjs.com" target="_blank" rel="noopener">NPM</a>
+      <a href="https://yarnpkg.com" target="_blank" rel="noopener">Yarn</a>
+    </article>
+  </div>
+
+  <footer>
+    <small>&copy; 2025 Matheus Sá — console.log(Tips)</small>
+  </footer>
+</main>
+</body>
+</html>

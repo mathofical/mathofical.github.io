@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>console.log(Tips) — Guia de linguagens</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#07060a;
+    --card:#0f1724;
+    --muted:#9fb2ff;
+    --accent1:#7f00ff;
+    --accent2:#00d4ff;
+    --glass:rgba(255,255,255,0.04);
+    --glass-strong:rgba(255,255,255,0.06);
+  }
+
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(127,0,255,0.08), transparent),
+                radial-gradient(900px 450px at 90% 90%, rgba(0,212,255,0.03), transparent),
+                var(--bg);
+    color:#e6f0ff;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5; padding-top:84px;
+  }
+
+
+  header{
+    position:fixed; top:0; left:0; width:100%; z-index:1000;
+    background: linear-gradient(90deg,var(--accent1), #2575fc 60%);
+    padding:12px 20px; display:flex; gap:12px; align-items:center; justify-content:space-between;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    backdrop-filter: blur(6px);
+  }
+  .brand{font-weight:800; letter-spacing:0.6px; font-size:18px; color:#fff}
+  nav .links{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+  nav .links a{
+    color:#e8eefc; text-decoration:none; font-weight:700; padding:6px 12px; border-radius:8px;
+    transition:all .18s ease; font-size:14px;
+  }
+  nav .links a:hover{
+    color:#020617; background:rgba(255,255,255,0.92);
+    text-shadow:0 0 12px rgba(255,255,255,0.06);
+  }
+
+
+  .wrap{max-width:1200px; margin:40px auto; padding:20px}
+  .hero{display:flex; gap:22px; align-items:flex-start; margin-bottom:18px}
+  .hero .title{flex:1}
+  .hero h1{font-size:26px; margin-bottom:8px; letter-spacing:0.2px}
+  .hero p{color:var(--muted); opacity:0.9}
+
+
+  .controls{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center}
+  .search{flex:1; min-width:220px}
+  .search input{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    color:#e8eefc; font-weight:600;
+  }
+  .select, .btn { padding:10px 12px; border-radius:10px; background:var(--glass); border:1px solid rgba(255,255,255,0.03); color: #eaf1ff; font-weight:700; cursor:pointer }
+  .select select{ background:transparent; border:0; color:inherit; font-weight:700; outline:none }
+
+
+  .grid{display:grid; gap:18px; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); margin-top:18px}
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.04);
+    padding:16px; border-radius:14px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    transition: transform .14s ease, box-shadow .14s ease;
+    position:relative; overflow:hidden;
+  }
+  .card:hover{ transform: translateY(-6px); box-shadow:0 22px 60px rgba(2,6,23,0.8) }
+  .card h3{margin-bottom:8px}
+  .meta{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px}
+  .pill{background: rgba(255,255,255,0.03); padding:6px 8px; border-radius:8px; font-weight:700; font-size:12px; color:#e7f0ff}
+  .desc{color:#cfe6ff; opacity:0.95; margin-bottom:12px}
+  .uses li{margin-left:18px; list-style:disc; color:#cfe6ff; margin-bottom:4px}
+  .resources{display:flex; gap:8px; flex-wrap:wrap}
+  .resources a{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:8px 10px; border-radius:8px; text-decoration:none; color:#eaf1ff; font-weight:700; font-size:13px}
+  .resources a:hover{filter:brightness(1.08)}
+  .foot{margin-top:12px; color:var(--muted); font-size:13px}
+
+
+  .more{margin-top:12px; border-top:1px dashed rgba(255,255,255,0.03); padding-top:12px; display:none}
+  .more.show{display:block}
+  .learn-steps{margin-left:18px; color:#dbe9ff}
+  .projects li{margin-left:18px;color:#dbe9ff}
+
+
+  .fav{
+    position:absolute; right:12px; top:12px; border-radius:8px; padding:6px 8px; font-weight:800; cursor:pointer;
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.03); color:#eaf1ff; font-size:13px;
+  }
+  .fav.active{
+    background: linear-gradient(90deg,var(--accent2), var(--accent1));
+    color:#03020a; text-shadow: 0 6px 30px rgba(0,212,255,0.12);
+  }
+
+
+  .controls-right{display:flex; gap:10px; align-items:center}
+  .small{font-size:12px;color:var(--muted)}
+  .legend{display:flex; gap:8px; margin-top:10px; align-items:center}
+  .legend .dot{width:10px;height:10px;border-radius:50%}
+
+  footer{margin-top:24px; text-align:center; color:var(--muted); padding:26px 0}
+  @media (max-width:720px){
+    .hero{flex-direction:column}
+    .controls{align-items:stretch}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">console.log(Tips)</div>
+  <nav>
+    <div class="links">
+      <a href="../index.html">Início</a>
+      <a href="AboutMe.html">Sobre</a>
+      <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://code.visualstudio.com" target="_blank" rel="noopener">VS Code</a>
+      <a href="https://developer.mozilla.org/pt-BR/" target="_blank" rel="noopener">MDN</a>
+      <a href="https://stackoverflow.com" target="_blank" rel="noopener">StackOverflow</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap" id="app">
+  <section class="hero">
+    <div class="title">
+      <h1>Guia profundo — 15 linguagens para começar (e para onde ir depois)</h1>
+      <p>Para cada linguagem: <strong>uso principal</strong>, <strong>dificuldade</strong>, <strong>faixa salarial</strong>, <strong>estimativa de vagas no Brasil</strong>, <strong>roteiro de aprendizado</strong>, projetos sugeridos e links oficiais/cursos.</p>
+
+      <div class="controls">
+        <div class="search"><input id="filtro" placeholder="Procure por linguagem, uso ou tecnologia (ex: 'web', 'IA', 'mobile')"></div>
+
+        <div class="controls-right">
+          <div class="select">
+            <select id="filterArea">
+              <option value="all">Todas as áreas</option>
+              <option value="web">Web</option>
+              <option value="mobile">Mobile</option>
+              <option value="backend">Backend</option>
+              <option value="data">Data / IA</option>
+              <option value="systems">Sistemas / Embedded</option>
+              <option value="games">Games</option>
+            </select>
+          </div>
+
+          <div class="select">
+            <select id="sortBy">
+              <option value="default">Ordenar: Recomendado</option>
+              <option value="vacancies">Ordenar: Vagas (estimadas)</option>
+              <option value="salary">Ordenar: Salário médio</option>
+              <option value="difficulty">Ordenar: Dificuldade</option>
+            </select>
+          </div>
+
+          <button class="btn" id="btnFavView">Ver Favoritos</button>
+          <button class="btn" id="btnReset">Mostrar tudo</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cards" class="grid" aria-live="polite"></section>
+
+  <section class="deep" id="deepExplain" style="margin-top:18px; padding:14px; border-radius:12px;">
+    <h2 style="margin-bottom:8px">Sobre números (vagas / salários)</h2>
+    <p style="color:var(--muted)">As estimativas de vagas são um ponto de partida — elas mudam com filtros (cidade, remoto/híbrido) e termos de busca. As faixas salariais refletem médias gerais para o Brasil (júnior → sênior). Use estas informações como orientação, e sempre verifique fontes atualizadas no momento da candidatura.</p>
+    <div class="legend" style="margin-top:10px">
+      <div class="dot" style="background:linear-gradient(90deg,var(--accent1),var(--accent2))"></div><div class="small">Acento visual indica tecnologias quentes</div>
+    </div>
+  </section>
+
+  <footer>
+    <small>&copy; 2025 console.log(Tips) — dados estimados, atualize conforme o mercado.</small>
+  </footer>
+</main>
+
+<script>
+
+const languages = [
+  {
+    id:'javascript',
+    name:'JavaScript',
+    areas:['web','frontend','backend'],
+    difficulty:'Média',
+    salary:'R$ 2.500 — R$ 9.000',
+    vacancies:'~3.000+ vagas (Brasil, web/front & node)',
+    uses:['Frontend (React/Vue/Angular)','Backend com Node.js','Fullstack','Mobile (React Native)'],
+    learning:[
+      'HTML/CSS básicos → DOM e eventos',
+      'JS moderno (ES6+) — promises, async/await, módulos',
+      'Fetch/HTTP, manipulação de API',
+      'Escolher framework (React recomendado) e estudar bundlers',
+      'TypeScript para tipagem'
+    ],
+    projects:['To-do app com persistência','SPA com consumo de API','Mini projeto fullstack (Node + Mongo/Express)'],
+    resources:[
+      {title:'MDN JavaScript',url:'https://developer.mozilla.org/pt-BR/docs/Web/JavaScript'},
+      {title:'Node.js',url:'https://nodejs.org'}
+    ],
+    tips:['Comece com conceitos, não só copiando tutoriais','Pratique debug no DevTools']
+  },
+  {
+    id:'typescript',
+    name:'TypeScript',
+    areas:['web','backend'],
+    difficulty:'Média',
+    salary:'Segue JS, tende a alta com escala (R$ 3.000 — R$ 11.000)',
+    vacancies:'~1.200+ (crescendo em SP e empresas grandes)',
+    uses:['Tipagem para apps JS','Back-end Node + TS','Librarias e ferramentas em larga escala'],
+    learning:[
+      'Entenda types, interfaces e generics',
+      'Integração com React/Node',
+      'Ferramentas: tsc, tsconfig, eslint'
+    ],
+    projects:['Migrar projeto JS para TS','Criar lib com tipagens'],
+    resources:[
+      {title:'TypeScript',url:'https://www.typescriptlang.org'}
+    ],
+    tips:['TS pega leve no começo — comece anotando types simples']
+  },
+  {
+    id:'python',
+    name:'Python',
+    areas:['data','backend','automation'],
+    difficulty:'Fácil → Médio',
+    salary:'R$ 3.000 — R$ 11.000',
+    vacancies:'~2.000 — 6.000 vagas (data / web / automação)',
+    uses:['Data Science / ML','Backend (Django/Flask)','Scripting / Automação'],
+    learning:[
+      'Sintaxe, listas, dicionários, funções',
+      'Pandas / NumPy para dados',
+      'ML básico (scikit-learn) → frameworks (PyTorch/TensorFlow)',
+      'Web com Django / APIs REST'
+    ],
+    projects:['Análise de dados simples','API REST com Flask/Django','Modelo ML simples (classificação)'],
+    resources:[
+      {title:'Python.org',url:'https://www.python.org'},
+      {title:'Pandas docs',url:'https://pandas.pydata.org/docs/'}
+    ],
+    tips:['Pratique com datasets reais (Kaggle)']
+  },
+  {
+    id:'java',
+    name:'Java',
+    areas:['backend','enterprise'],
+    difficulty:'Média → Difícil',
+    salary:'R$ 4.000 — R$ 13.000',
+    vacancies:'~10.000+ vagas (muitas corporações e fintechs)',
+    uses:['Sistemas corporativos','Back-end com Spring Boot','APIs e microserviços'],
+    learning:[
+      'Fundamentos OOP (classes, herança, interfaces)',
+      'Coleções e streams',
+      'Spring Boot, JPA, testes (JUnit)',
+      'Arquitetura e microserviços'
+    ],
+    projects:['API corporativa com Spring Boot','Microserviços comunicando via REST/Kafka'],
+    resources:[
+      {title:'Oracle Java',url:'https://www.oracle.com/java/'},
+      {title:'Spring',url:'https://spring.io/projects/spring-boot'}
+    ],
+    tips:['Entenda padrões (DAO, Repository, Service)']
+  },
+  {
+    id:'csharp',
+    name:'C# (.NET)',
+    areas:['backend','games'],
+    difficulty:'Média',
+    salary:'R$ 3.500 — R$ 12.000',
+    vacancies:'~8.000+ vagas (corporativo e Unity)',
+    uses:['APIs .NET','Sistemas corporativos','Games (Unity)'],
+    learning:[
+      'C# básico e OOP',
+      '.NET Core, Entity Framework',
+      'Deploy em Azure / containers',
+      'Unity para jogos'
+    ],
+    projects:['API com .NET','Jogo simples na Unity'],
+    resources:[
+      {title:'Microsoft C# docs',url:'https://learn.microsoft.com/pt-br/dotnet/csharp/'},
+      {title:'Unity',url:'https://unity.com'}
+    ],
+    tips:['C# é muito pedido no mercado corporativo — invista em projetos reais']
+  },
+  {
+    id:'c_cpp',
+    name:'C / C++',
+    areas:['systems','games','embedded'],
+    difficulty:'Difícil',
+    salary:'R$ 4.000 — R$ 16.000+',
+    vacancies:'~3.000 — 10.000 (vary por setor)',
+    uses:['Sistemas embarcados','Motores de jogo','Apps de alta performance'],
+    learning:[
+      'Ponteiros, gerenciamento de memória',
+      'Compilação e linking',
+      'Ferramentas: gdb, valgrind',
+      'Padrões e otimização'
+    ],
+    projects:['Pequeno kernel/driver','Engine simples ou algoritmo otimizado'],
+    resources:[
+      {title:'C++ reference',url:'https://en.cppreference.com/w/'}
+    ],
+    tips:['Programe problemas de baixo nível para ganhar confiança']
+  },
+  {
+    id:'go',
+    name:'Go (Golang)',
+    areas:['backend','cloud'],
+    difficulty:'Média',
+    salary:'R$ 4.000 — R$ 14.000',
+    vacancies:'~1.000+ (crescendo em cloud/startups)',
+    uses:['Microserviços','Sistemas concorrentes','CLI e ferramentas'],
+    learning:[
+      'Sintaxe e goroutines/canais',
+      'Teste, profiling e deploy',
+      'Construir binários e containerização'
+    ],
+    projects:['API performática','CLI utilitário para devops'],
+    resources:[
+      {title:'Golang',url:'https://golang.org'},
+      {title:'Go by Example',url:'https://gobyexample.com'}
+    ],
+    tips:['Foque em concorrência segura com goroutines']
+  },
+  {
+    id:'php',
+    name:'PHP',
+    areas:['web','backend'],
+    difficulty:'Fácil',
+    salary:'R$ 2.500 — R$ 8.000',
+    vacancies:'~1.000 — 4.000 (WordPress, Laravel)',
+    uses:['Back-end web (Laravel)','Sites WordPress','APIs'],
+    learning:[
+      'PHP 7/8 moderno, Composer',
+      'Framework (Laravel)',
+      'Segurança web básica'
+    ],
+    projects:['Site com CMS/WordPress','API com Laravel'],
+    resources:[
+      {title:'PHP.net',url:'https://www.php.net'},
+      {title:'Laravel',url:'https://laravel.com'}
+    ],
+    tips:['WordPress e freelancing abrem portas rápidas']
+  },
+  {
+    id:'ruby',
+    name:'Ruby',
+    areas:['web'],
+    difficulty:'Fácil → Médio',
+    salary:'R$ 3.000 — R$ 9.000',
+    vacancies:'~500 — 1.500 (Rails ainda usado)',
+    uses:['Web (Ruby on Rails)','Prototipagem rápida'],
+    learning:[
+      'Sintaxe Ruby',
+      'Rails: MVC, ActiveRecord, rotas',
+      'Deploy com Heroku/containers'
+    ],
+    projects:['Aplicação CRUD com Rails','Mini SaaS para praticar fullstack'],
+    resources:[
+      {title:'Ruby-lang',url:'https://www.ruby-lang.org'},
+      {title:'Rails',url:'https://rubyonrails.org'}
+    ],
+    tips:['Rails acelera aprendizado fullstack']
+  },
+  {
+    id:'swift',
+    name:'Swift',
+    areas:['mobile'],
+    difficulty:'Média',
+    salary:'R$ 4.500 — R$ 14.000 (iOS devs costumam receber bem)',
+    vacancies:'~1.000+ (vagas iOS, especialmente SP/RJ)',
+    uses:['iOS apps (SwiftUI/UIKit)'],
+    learning:[
+      'Swift básico e OOP',
+      'SwiftUI / UIKit',
+      'Arquiteturas: MVVM / Clean'
+    ],
+    projects:['App iOS básico','Integração com API e notificações'],
+    resources:[
+      {title:'Swift by Apple',url:'https://developer.apple.com/swift/'}
+    ],
+    tips:['App store e UX contam muito para sucesso']
+  },
+  {
+    id:'kotlin',
+    name:'Kotlin',
+    areas:['mobile','backend'],
+    difficulty:'Média',
+    salary:'R$ 4.000 — R$ 12.000',
+    vacancies:'~1.000+ (Android & backend com Ktor)',
+    uses:['Android nativo','Back-end com Ktor'],
+    learning:[
+      'Kotlin sintaxe e coroutines',
+      'Android Jetpack/Compose',
+      'Integração com APIs'
+    ],
+    projects:['App Android com Jetpack Compose','Microservice em Ktor'],
+    resources:[
+      {title:'Kotlin',url:'https://kotlinlang.org'}
+    ],
+    tips:['Kotlin é a escolha atual pra Android moderno']
+  },
+  {
+    id:'rust',
+    name:'Rust',
+    areas:['systems','backend'],
+    difficulty:'Difícil',
+    salary:'R$ 5.000 — R$ 18.000 (alta demanda para performance/segurança)',
+    vacancies:'~300 — 1.000 (crescendo em sistemas e infra)',
+    uses:['Sistemas seguros','Ferramentas de performance','Blockchain'],
+    learning:[
+      'Conceitos de ownership/borrowing',
+      'Lifetimes, concorrência sem data races',
+      'Build e deploy (cargo)'
+    ],
+    projects:['Ferramenta CLI rápida','Módulo de performance para app'],
+    resources:[
+      {title:'Rust',url:'https://www.rust-lang.org'}
+    ],
+    tips:['Rust tem curva íngreme — aprenda com pequenos projetos']
+  },
+  {
+    id:'dart',
+    name:'Dart / Flutter',
+    areas:['mobile','web'],
+    difficulty:'Média',
+    salary:'R$ 3.500 — R$ 12.000',
+    vacancies:'~800+ (Flutter em alta para cross-platform)',
+    uses:['Apps cross-platform (Flutter)'],
+    learning:[
+      'Dart sintaxe',
+      'Widgets e estado no Flutter',
+      'Plugins e integração nativa'
+    ],
+    projects:['App cross-platform com Flutter','Portar design para app funcional'],
+    resources:[
+      {title:'Flutter',url:'https://flutter.dev'}
+    ],
+    tips:['Flutter acelera muito o desenvolvimento mobile']
+  },
+  {
+    id:'sql',
+    name:'SQL (bancos de dados)',
+    areas:['data','backend'],
+    difficulty:'Fácil → Médio',
+    salary:'R$ 3.000 — R$ 11.000 (DBAs e Engineers mais altos)',
+    vacancies:'~5.000+ (todas as áreas buscam SQL)',
+    uses:['Consultas, análise de dados, backend','DB design'],
+    learning:[
+      'SELECT/JOIN/agrupamentos',
+      'Normalização, índices, otimização',
+      'Bancos relacionais e NoSQL (quando usar cada um)'
+    ],
+    projects:['Relatório com queries complexas','Modelagem de DB pra app'],
+    resources:[
+      {title:'PostgreSQL docs',url:'https://www.postgresql.org/docs/'}
+    ],
+    tips:['Saber SQL abre portas em qualquer stack']
+  },
+  {
+    id:'r',
+    name:'R',
+    areas:['data'],
+    difficulty:'Média',
+    salary:'R$ 3.000 — R$ 10.000',
+    vacancies:'~300 — 1.000 (data science/academia)',
+    uses:['Estatística, análise de dados, visualização'],
+    learning:[
+      'Manipulação de dados com tidyverse',
+      'Modelos estatísticos e visualização (ggplot2)',
+      'Integração com Python/SQL'
+    ],
+    projects:['Análise estatística com dataset real','Dashboards estatísticos'],
+    resources:[
+      {title:'R-project',url:'https://www.r-project.org'}
+    ],
+    tips:['R é forte para estatística — escolha se seu foco for análise']
+  }
+];
+
+
+function estimateNumberFromString(str){
+
+  const m = str.match(/(\d{1,3}(?:[.,]\d{3})?|\d+)(?=(\+|\s|$))/);
+  if(!m) return 0;
+
+  return Number(m[0].replace(/\./g,'').replace(',',''));
+}
+
+/* Estado */
+let currentList = [...languages];
+let showOnlyFavs = false;
+const favKey = 'cltips_favs';
+const favorites = new Set(JSON.parse(localStorage.getItem(favKey) || '[]'));
+
+
+const container = document.getElementById('cards');
+
+function createCard(lang){
+  const article = document.createElement('article');
+  article.className = 'card';
+  article.id = 'card-'+lang.id;
+
+
+  const resourcesHtml = (lang.resources || []).map(r => `<a href="${r.url}" target="_blank" rel="noopener">${r.title}</a>`).join('');
+
+  const projectsHtml = (lang.projects || []).map(p => `<li>${p}</li>`).join('');
+  const learningHtml = (lang.learning || []).map(s => `<li>${s}</li>`).join('');
+  const usesHtml = (lang.uses || []).map(u => `<li>${u}</li>`).join('');
+  const tipsHtml = (lang.tips || []).map(t => `<li>${t}</li>`).join('');
+
+ 
+  const favActive = favorites.has(lang.id) ? 'active' : '';
+
+  article.innerHTML = `
+    <button class="fav ${favActive}" aria-pressed="${favorites.has(lang.id)}" title="Favoritar">★</button>
+    <h3>${lang.name}</h3>
+    <div class="meta">
+      <div class="pill">${lang.difficulty}</div>
+      <div class="pill">Vagas: ${lang.vacancies}</div>
+      <div class="pill">Salário: ${lang.salary}</div>
+    </div>
+
+    <p class="desc">${(lang.uses||[]).slice(0,2).join(' • ')}</p>
+
+    <div><strong>Usos comuns:</strong>
+      <ul class="uses">${usesHtml}</ul>
+    </div>
+
+    <div class="resources">
+      ${resourcesHtml}
+      <a class="btn" href="#deepExplain">Como aprender</a>
+      <button class="btn toggleMore">Ver mais</button>
+    </div>
+
+    <div class="more" aria-hidden="true">
+      <div style="margin-top:8px"><strong>Roteiro de aprendizado:</strong>
+        <ol class="learn-steps">${learningHtml}</ol>
+      </div>
+
+      <div style="margin-top:8px"><strong>Projetos sugeridos:</strong>
+        <ul class="projects">${projectsHtml}</ul>
+      </div>
+
+      <div style="margin-top:8px"><strong>Dicas rápidas:</strong>
+        <ul class="projects">${tipsHtml}</ul>
+      </div>
+
+      <div class="foot">Fontes & observações: estimativas — cheque vagas reais antes de aplicar.</div>
+    </div>
+  `;
+
+
+  const favBtn = article.querySelector('.fav');
+  favBtn.addEventListener('click', ()=>{
+    if(favorites.has(lang.id)){
+      favorites.delete(lang.id);
+      favBtn.classList.remove('active');
+      favBtn.setAttribute('aria-pressed','false');
+    } else {
+      favorites.add(lang.id);
+      favBtn.classList.add('active');
+      favBtn.setAttribute('aria-pressed','true');
+    }
+    localStorage.setItem(favKey, JSON.stringify(Array.from(favorites)));
+  });
+
+  const toggle = article.querySelector('.toggleMore');
+  const more = article.querySelector('.more');
+  toggle.addEventListener('click', ()=>{
+    const isShown = more.classList.toggle('show');
+    more.setAttribute('aria-hidden', String(!isShown));
+    toggle.textContent = isShown ? 'Mostrar menos' : 'Ver mais';
+  });
+
+  return article;
+}
+
+function render(list){
+  container.innerHTML = '';
+  if(list.length === 0){
+    container.innerHTML = '<div style="color:var(--muted);padding:20px;border-radius:12px;background:var(--glass)">Nenhuma linguagem encontrada — tente outro filtro.</div>';
+    return;
+  }
+  list.forEach(lang=>{
+    container.appendChild(createCard(lang));
+  });
+}
+
+
+function applyFilters(){
+  const q = document.getElementById('filtro').value.toLowerCase().trim();
+  const area = document.getElementById('filterArea').value;
+  const sortBy = document.getElementById('sortBy').value;
+
+  let list = languages.slice();
+
+  if(showOnlyFavs){
+    list = list.filter(l => favorites.has(l.id));
+  }
+
+  if(area !== 'all'){
+    list = list.filter(l => (l.areas || []).includes(area));
+  }
+
+  if(q){
+    list = list.filter(l => {
+      const text = (l.name + ' ' + (l.uses||[]).join(' ') + ' ' + (l.learning||[]).join(' ') + ' ' + (l.resources||[]).map(r=>r.title).join(' ')).toLowerCase();
+      return text.includes(q);
+    });
+  }
+
+  if(sortBy === 'vacancies'){
+    list.sort((a,b) => estimateNumberFromString(b.vacancies) - estimateNumberFromString(a.vacancies));
+  } else if(sortBy === 'salary'){
+    list.sort((a,b) => estimateNumberFromString(b.salary) - estimateNumberFromString(a.salary));
+  } else if(sortBy === 'difficulty'){
+
+    const weight = d => d.includes('Fácil') ? 0 : d.includes('Média') ? 1 : 2;
+    list.sort((a,b) => weight(a.difficulty) - weight(b.difficulty));
+  }
+
+  currentList = list;
+  render(list);
+}
+
+document.getElementById('filtro').addEventListener('input', ()=> applyFilters());
+document.getElementById('filterArea').addEventListener('change', ()=> applyFilters());
+document.getElementById('sortBy').addEventListener('change', ()=> applyFilters());
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  document.getElementById('filtro').value = '';
+  document.getElementById('filterArea').value = 'all';
+  document.getElementById('sortBy').value = 'default';
+  showOnlyFavs = false;
+  document.getElementById('btnFavView').textContent = 'Ver Favoritos';
+  applyFilters();
+});
+
+document.getElementById('btnFavView').addEventListener('click', (e)=>{
+  showOnlyFavs = !showOnlyFavs;
+  e.target.textContent = showOnlyFavs ? 'Voltar' : 'Ver Favoritos';
+  applyFilters();
+});
+
+render(languages);
+</script>
+</body>
+</html>
