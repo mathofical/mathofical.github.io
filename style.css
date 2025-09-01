@@ -5,98 +5,90 @@
   font-family: "League Spartan", sans-serif;
   animation: fade ease 0.6s;
 }
-#navindex {
-  position: fixed;       /* fica grudado no topo */
-  top: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.986);
-  display: flex;
-  justify-content: center;
-  z-index: 1000;
-  transition: all ease 1.0s;
-}
-#navindex nav{
-  display: flex;
-  justify-content: center;
-  gap: 40px; 
-  padding: 13px 0;
-  background-color: rgba(255, 255, 255, 0.918);
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-}
+@media (max-width: 768px) {
+  #navindex {
+    position: fixed;       /* fica grudado no topo */
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.986);
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+    transition: all ease 1.0s;
+  }
 
-#navindex a {
-  color: rgb(255, 136, 0);
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 18px;
-  font-weight: 900;
-}
-#logo-containerind {
-  position: absolute;
-  top: 7px;
-  right: 10px;
-  z-index: 1100;
-}
+  #navindex nav {
+    display: flex;
+    justify-content: center;
+    gap: 40px; 
+    padding: 13px 0;
+    background-color: rgba(255, 255, 255, 0.918);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
 
-#logoindex {
-  width: 35px;
-  height: auto;
-  border-radius: 1000px;
-  transition: all ease 1.0s;
-}
+  #navindex a {
+    color: rgb(255, 136, 0);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    font-weight: 900;
+  }
 
+  #logo-containerind {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    z-index: 1100;
+  }
+
+  #logoindex {
+    width: 35px;
+    height: auto;
+    border-radius: 1000px;
+    transition: all ease 1.0s;
+  }
+
+  .pizza {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+.button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all ease 1.0s;
+    font-family: "League Spartan" sans-serif;
+    font-weight: 900;
+  }
+  .pizza1-img {
+    width: 100%; 
+    display: block;
+    border-radius: 10px; 
+    transition: all ease 1.0s;
+  }
+}
 #logoindex:hover {
   transform: translateY(-14%) scale(1.02);
 }
-
-.pizza {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
-  text-align: center;
-  margin-top: 40px;
-}
-
-.button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background: #6c63ff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all ease 1.0s;
-  font-family: "League Spartan" sans-serif;
-  font-weight: 900;
-}
-.pizza1-img {
-  width: 100%; 
-  display: block;
-  border-radius: 10px; 
-  transition: all ease 1.0s;
-}
-.produtos {
-  display: grid;                     /* ativa o grid */
-  grid-template-columns: 1fr 1fr;    /* 2 colunas iguais */
-  gap: 20px;                         /* espaço entre os produtos */
-  max-width: 800px;                  /* largura máxima do container */
-  margin: 0 auto;
-}
-
-.pizza2 {
-  display: inline-block; /* coloca lado a lado */
-  vertical-align: top;   /* alinha pelo topo */
-  margin: 10px;          /* espaço entre eles */
-  width: 240px;
-  border: none;
-  border-radius: 10px;
-  padding: 20px;
-}
-.pizza1-img:hover {
-  transform: translateY(-1%) scale(1.05);
+@media (max-width: 600px) {
+  .produtos {
+    display: grid;                     /* ativa o grid */
+    grid-template-columns: 1fr 1fr;    /* 2 colunas iguais */
+    gap: 20px;                         /* espaço entre os produtos */
+    max-width: 800px;                  /* largura máxima do container */
+    margin: 0 auto;
+  }
 }
 #navindex nav a {
   transition: all ease 1.0s;
@@ -115,7 +107,9 @@
               0 0 80px #ff7300;
   opacity: 1;
 }
-
+.pizza1-img:hover {
+  transform: translateY(-1%) scale(1.05);
+}
 @keyframes fade {
   from {
     opacity: 0;
