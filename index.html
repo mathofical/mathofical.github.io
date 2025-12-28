@@ -1,55 +1,373 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <title>Top Pizza - Loja</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body id="bodyindex">
-    <div id="navindex">
-          <div id="logo-containerind">
-            <img src="img/fe9db2e7db4f4b4196b7ea0ce2852129 (1).jpg" id="logoindex" alt="logo">
-          </div>
-      <nav>
-        <a href="contato.html">Panfleto</a>
-        <a href="">Produtos</a>
-        <a href="cart.html">Carrinho</a>
-        <a href="about.html">Sobre nós</a>
-      </nav>
+import React, { useState, useEffect, useRef } from 'react';
+import { initializeApp } from 'firebase/app';
+import { 
+  getAuth, 
+  signInAnonymously,
+  signInWithCustomToken,
+  updateProfile
+} from 'firebase/auth';
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  query, 
+  where, 
+  onSnapshot, 
+  doc, 
+  updateDoc, 
+  deleteDoc, 
+  serverTimestamp,
+  getDocs,
+  orderBy,
+  increment,
+  writeBatch
+} from 'firebase/firestore';
+import { 
+  MessageSquare, 
+  User, 
+  LogOut, 
+  Plus, 
+  Trash2, 
+  Edit, 
+  Send, 
+  CheckCircle, 
+  X,
+  Package,
+  DollarSign,
+  Lock,
+  Eye,
+  EyeOff,
+  ShoppingBag,
+  Layers,
+  Image as ImageIcon,
+  Upload,
+  LogIn,
+  Crown,
+  Sparkles,
+  TrendingUp,
+  Ticket,
+  Filter,
+  Camera,
+  Settings,
+  List,
+  Grid,
+  Clock,
+  ArrowUp,
+  ArrowDown,
+  AlertTriangle,
+  Info
+} from 'lucide-react';
+
+// --- Configuração do Firebase ---
+const firebaseConfig = JSON.parse(__firebase_config);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = __app_id;
+
+// --- Constantes ---
+const ADMIN_EMAIL = "mteeles2020@gmail.com";
+const ADMIN_PASS = "13042012";
+const PIX_KEY = "mteelestube@gmail.com";
+
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+};
+
+// --- Estilos ---
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+  .animate-slide-up { animation: slideUp 0.4s ease-out forwards; }
+  .animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
+  .animate-scale-in { animation: scaleIn 0.2s ease-out forwards; }
+  .gold-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+  .gold-scroll::-webkit-scrollbar-track { background: #111827; }
+  .gold-scroll::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
+`;
+document.head.appendChild(style);
+
+// --- Componentes UI Globais ---
+
+// 1. Notificação (Toast)
+const Toast = ({ message, type, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  const bg = type === 'error' ? 'bg-red-600' : 'bg-green-600';
+  const icon = type === 'error' ? <AlertTriangle size={18} /> : <CheckCircle size={18} />;
+
+  return (
+    <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[100] ${bg} text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-slide-down font-bold text-sm`}>
+      {icon} {message}
+    </div>
+  );
+};
+
+// 2. Modal de Confirmação (Substituto do window.confirm)
+const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel }) => {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+      <div className="bg-gray-900 border border-gray-700 w-full max-w-sm rounded-2xl p-6 shadow-2xl animate-scale-in">
+        <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+        <p className="text-gray-400 text-sm mb-6">{message}</p>
+        <div className="flex gap-3 justify-end">
+          <button onClick={onCancel} className="px-4 py-2 rounded-lg text-gray-300 hover:bg-gray-800 transition">Cancelar</button>
+          <button onClick={onConfirm} className="px-4 py-2 rounded-lg bg-red-600 text-white font-bold hover:bg-red-500 transition">Sim, Excluir</button>
+        </div>
       </div>
-    <div class="produtos">
-    <div class="pizza">
-      <img src="img/WhatsApp Image 2025-08-28 at 21.19.10 (1).jpeg" class="pizza1-img">
-      <button class="button">Adicionar ao carrinho</button>
     </div>
-    <div class="pizza">
-      <img src="img/fe9db2e7db4f4b4196b7ea0ce2852129 (1).jpg" class="pizza1-img">
-      <button class="button">Adicionar ao carrinho</button>
-    </div>
-        <div class="pizza">
-      <img src="img/WhatsApp Image 2025-08-28 at 21.19.10 (1).jpeg" class="pizza1-img">
-      <button class="button">Adicionar ao carrinho</button>
-    </div>
-    <div class="pizza">
-      <img src="img/fe9db2e7db4f4b4196b7ea0ce2852129 (1).jpg" class="pizza1-img">
-      <button class="button">Adicionar ao carrinho</button>
-    </div>
-        <div class="pizza">
-      <img src="img/WhatsApp Image 2025-08-28 at 21.19.10 (1).jpeg" class="pizza1-img">
-      <button class="button">Adicionar ao carrinho</button>
-    </div>
-    <div class="pizza">
-      <img src="img/fe9db2e7db4f4b4196b7ea0ce2852129 (1).jpg" class="pizza1-img">
-      <button class="button">Adicionar ao carrinho</button>
-    </div>
-    </div>
+  );
+};
 
+// --- Componentes Principais ---
 
-    <script src="script.js"></script>
-  </body>
+const ProfileModal = ({ user, isOpen, onClose, onUpdateUser, showToast }) => {
+  const [name, setName] = useState(user?.displayName || '');
+  const [photo, setPhoto] = useState(user?.photoURL || '');
+  const [loading, setLoading] = useState(false);
 
-</html>
+  if (!isOpen) return null;
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 800000) return showToast('Imagem muito grande (Max 800KB)', 'error');
+      const reader = new FileReader();
+      reader.onloadend = () => setPhoto(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (user.role !== 'admin') {
+        const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users_credentials', user.uid);
+        await updateDoc(userRef, { name, photoURL: photo });
+      }
+      onUpdateUser({ ...user, displayName: name, photoURL: photo });
+      showToast('Perfil atualizado!', 'success');
+      onClose();
+    } catch (err) { console.error(err); showToast('Erro ao atualizar.', 'error'); } finally { setLoading(false); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
+      <div className="bg-gray-900 border border-yellow-500/20 w-full max-w-md rounded-2xl p-6 relative animate-scale-in">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-white"><X size={24} /></button>
+        <h2 className="text-2xl font-bold text-white mb-6 text-center">Meu Perfil</h2>
+        <form onSubmit={handleSave} className="space-y-6">
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative group">
+              <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-yellow-500 bg-black">
+                {photo ? <img src={photo} className="w-full h-full object-cover" /> : <User className="w-full h-full p-4 text-gray-600" />}
+              </div>
+              <label className="absolute bottom-0 right-0 bg-yellow-500 text-black p-2 rounded-full cursor-pointer hover:bg-yellow-400 transition shadow-lg">
+                <Camera size={16} />
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+              </label>
+            </div>
+            <p className="text-gray-400 text-sm">{user.email}</p>
+          </div>
+          <div><label className="text-xs font-bold text-gray-500 uppercase ml-1">Nome</label><input value={name} onChange={e => setName(e.target.value)} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:border-yellow-500 outline-none" /></div>
+          <button disabled={loading} className="w-full bg-yellow-500 text-black font-bold py-3 rounded-lg hover:bg-yellow-400 transition">{loading ? 'Salvando...' : 'Salvar'}</button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const AuthModal = ({ isOpen, onClose, onLogin, showToast }) => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
+        onLogin({ uid: 'admin-super-user', email: ADMIN_EMAIL, displayName: 'Administrador', role: 'admin', photoURL: '' });
+        onClose();
+        return;
+      }
+      const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'users_credentials');
+      if (isLogin) {
+        const q = query(usersRef, where('email', '==', email), where('password', '==', password));
+        const qs = await getDocs(q);
+        if (!qs.empty) { const d = qs.docs[0].data(); onLogin({ uid: qs.docs[0].id, email: d.email, displayName: d.name, photoURL: d.photoURL, role: 'customer' }); onClose(); } 
+        else showToast('Credenciais inválidas.', 'error');
+      } else {
+        const checkQ = query(usersRef, where('email', '==', email));
+        const checkQs = await getDocs(checkQ);
+        if (!checkQs.empty) showToast('Email já cadastrado.', 'error');
+        else {
+          const docRef = await addDoc(usersRef, { email, password, name, photoURL: '', createdAt: serverTimestamp() });
+          onLogin({ uid: docRef.id, email, displayName: name, photoURL: '', role: 'customer' });
+          onClose();
+        }
+      }
+    } catch (err) { showToast('Erro ao processar.', 'error'); } finally { setLoading(false); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in">
+      <div className="bg-gray-900 border border-yellow-500/20 w-full max-w-md rounded-2xl p-6 shadow-2xl relative animate-scale-in">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-white"><X size={24} /></button>
+        <h2 className="text-2xl font-bold text-white text-center mb-6">{isLogin ? 'Acessar Gold Lake' : 'Criar Conta'}</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && <div><label className="text-xs text-gray-500 uppercase font-bold">Nome</label><input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:border-yellow-500 outline-none" required /></div>}
+          <div><label className="text-xs text-gray-500 uppercase font-bold">Email</label><input type="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:border-yellow-500 outline-none" required /></div>
+          <div><label className="text-xs text-gray-500 uppercase font-bold">Senha</label><div className="relative"><input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-black/40 border border-gray-700 rounded-lg p-3 text-white focus:border-yellow-500 outline-none pr-10" required /><button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-3.5 text-gray-500 hover:text-yellow-500">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></div></div>
+          <button type="submit" disabled={loading} className="w-full bg-yellow-500 text-black font-bold py-3.5 rounded-lg hover:bg-yellow-400 transition disabled:opacity-50">{loading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Cadastrar')}</button>
+        </form>
+        <div className="mt-4 text-center"><button onClick={() => { setIsLogin(!isLogin); }} className="text-sm text-gray-400 hover:text-white">{isLogin ? 'Novo aqui? ' : 'Já tem conta? '}<span className="text-yellow-500 font-bold">{isLogin ? 'Cadastre-se' : 'Login'}</span></button></div>
+      </div>
+    </div>
+  );
+};
+
+const ChatWindow = ({ orderId, user, onClose, isAdmin, requestConfirm }) => {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [order, setOrder] = useState(null);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    if (!orderId) return;
+    const unsubOrder = onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId), (d) => { 
+        if (d.exists()) setOrder({ id: d.id, ...d.data() }); 
+        else onClose(); // Fecha se deletado
+    });
+    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'messages'));
+    const unsubMsg = onSnapshot(q, (s) => setMessages(s.docs.map(d => ({ id: d.id, ...d.data() })).filter(m => m.orderId === orderId).sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0))));
+    return () => { unsubOrder(); unsubMsg(); };
+  }, [orderId]);
+
+  useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'messages'), { orderId, text: newMessage, senderId: user.uid, senderEmail: user.email, isAdminSender: isAdmin, createdAt: serverTimestamp() });
+    setNewMessage('');
+  };
+
+  const deleteOrder = () => {
+    requestConfirm('Excluir Pedido?', 'Isso apagará o pedido e o chat permanentemente.', async () => {
+      onClose(); // Fecha primeiro
+      await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId));
+    });
+  };
+
+  if (!order) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+      <div className="w-full h-[100dvh] sm:h-[85vh] sm:max-w-2xl bg-gray-900 sm:rounded-2xl flex flex-col shadow-2xl border-0 sm:border sm:border-gray-700 overflow-hidden animate-slide-up">
+        <div className="shrink-0 p-4 bg-gray-800/80 backdrop-blur border-b border-gray-700 flex justify-between items-center z-10">
+          <div>
+            <h3 className="font-bold text-white text-lg flex items-center gap-2"><MessageSquare size={18} className="text-yellow-500" /> {isAdmin ? order.userEmail.split('@')[0] : 'Suporte Gold Lake'}</h3>
+            <p className="text-xs text-gray-400">{order.productName}</p>
+          </div>
+          <div className="flex gap-2">
+            {isAdmin && <button onClick={deleteOrder} className="p-2 hover:bg-red-900/30 text-red-400 rounded-full" title="Excluir"><Trash2 size={18} /></button>}
+            <button onClick={onClose} className="p-2 hover:bg-gray-700 rounded-full text-gray-400 hover:text-white"><X size={20} /></button>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-900/50 gold-scroll">
+          <div className="text-center">
+             <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border ${order.status === 'paid' ? 'bg-green-900/20 border-green-500/30 text-green-400' : 'bg-yellow-900/20 border-yellow-500/30 text-yellow-400'}`}>
+               {order.status === 'paid' ? 'Pedido Aprovado' : 'Aguardando Pagamento'}
+             </span>
+          </div>
+
+          {!isAdmin && order.status === 'pending' && (
+            <div className="p-4 bg-gradient-to-br from-gray-800 to-gray-900 border border-yellow-500/20 rounded-xl relative overflow-hidden group shadow-lg">
+              <div className="flex justify-between items-start mb-2">
+                 <h4 className="text-yellow-500 font-bold text-sm flex items-center gap-2"><Sparkles size={14} /> Pix para Pagamento</h4>
+                 <div className="text-right">
+                   <p className="text-xs text-gray-400">Total</p>
+                   <p className="text-xl font-bold text-white">{formatCurrency(order.finalPrice)}</p>
+                 </div>
+              </div>
+              <div className="flex gap-2 items-center bg-black/40 p-3 rounded-lg border border-gray-700 mb-2">
+                <code className="text-white font-mono text-sm truncate flex-1">{PIX_KEY}</code>
+                <button onClick={() => navigator.clipboard.writeText(PIX_KEY)} className="text-xs bg-yellow-600 hover:bg-yellow-500 text-black px-3 py-1.5 rounded font-bold">COPIAR</button>
+              </div>
+              <p className="text-[10px] text-gray-500 italic">Envie o comprovante para liberação.</p>
+            </div>
+          )}
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex ${msg.senderId === user.uid ? 'justify-end' : 'justify-start'} animate-scale-in`}>
+              <div className={`max-w-[85%] p-3 rounded-2xl text-sm relative ${msg.senderId === user.uid ? 'bg-yellow-600 text-black font-medium rounded-br-sm' : (msg.isAdminSender ? 'bg-gray-800 border border-red-500/30 text-white rounded-bl-sm' : 'bg-gray-800 text-gray-200 rounded-bl-sm')}`}>
+                {msg.isAdminSender && msg.senderId !== user.uid && <span className="absolute -top-3 left-0 bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded uppercase font-bold tracking-widest shadow-sm">Admin</span>}
+                <p className="break-words whitespace-pre-wrap">{msg.text}</p>
+                <span className={`text-[9px] block text-right mt-1 ${msg.senderId === user.uid ? 'text-black/60' : 'text-gray-500'}`}>{msg.createdAt?.seconds ? new Date(msg.createdAt.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...'}</span>
+              </div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="shrink-0 p-3 bg-gray-800 border-t border-gray-700 safe-area-bottom">
+          <form onSubmit={handleSendMessage} className="flex gap-2 items-center">
+            <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} className="flex-1 bg-gray-900 border border-gray-600 rounded-full px-4 py-3 text-white focus:ring-1 focus:ring-yellow-500 outline-none text-sm" placeholder="Digite sua mensagem..." />
+            <button type="submit" className="bg-yellow-500 hover:bg-yellow-400 text-black rounded-full p-3 transition disabled:opacity-50 shadow-lg" disabled={!newMessage.trim()}><Send size={20} /></button>
+          </form>
+        </div>
+        
+        {isAdmin && (
+          <div className="shrink-0 p-2 bg-gray-800 border-t border-gray-700 flex justify-end gap-2">
+             {order.status !== 'paid' && <button onClick={() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId), { status: 'paid' })} className="bg-green-600/90 text-white text-xs px-3 py-1.5 rounded flex items-center gap-1 font-bold"><CheckCircle size={14} /> Aprovar</button>}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const AdminDashboard = ({ user, onViewStore, requestConfirm, showToast }) => {
+  const [activeTab, setActiveTab] = useState('orders'); 
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [coupons, setCoupons] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [analyticsFilter, setAnalyticsFilter] = useState('week'); 
+  const [analyticsCategory, setAnalyticsCategory] = useState('all');
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [showProdForm, setShowProdForm] = useState(false);
+  const [prodData, setProdData] = useState({ name: '', price: '', discountPercent: '', description: '', image: '', categoryId: '', imageFit: 'cover' });
+  const [catName, setCatName] = useState('');
+  const [couponData, setCouponData] = useState({ code: '', percent: '', maxUses: '', maxVal: '' });
+
+  useEffect(() => {
+    const unsubProd = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'products'), (s) => setProducts(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const unsubCat = onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'categories'), orderBy('order', 'asc')), (s) => setCategories(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const unsubOrd = onSnapshot(query(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), orderBy('createdAt', 'desc')), (s) => setOrders(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    const unsubCoup = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'coupons'), (s) => setCoupons(s.docs.map(d => ({ id: d.id, ...d.data() }))));
+    return () => { unsubProd(); unsubCat(); unsubOrd(); unsubCoup(); };
+  }, []);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 800000) return showToast('Imagem muito grande!', 'error');
+      const reader = new FileReader();
+      reader.onloadend = () => setProdData({ ...prodData, image: reader.result }
